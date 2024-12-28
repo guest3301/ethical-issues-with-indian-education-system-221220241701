@@ -2,12 +2,12 @@ const cube = document.querySelector('.cube');
 
 // Function to handle device orientation
 function handleOrientation(event) {
-    const beta = event.beta; // X-axis rotation [-180,180]
-    const gamma = event.gamma; // Y-axis rotation [-90,90]
+    const beta = event.beta || 0; // X-axis rotation [-180,180]
+    const gamma = event.gamma || 0; // Y-axis rotation [-90,90]
 
     // Reduce sensitivity to 45%
-    const xRotation = (beta || 0) * 0.45;
-    const yRotation = (gamma || 0) * 0.45;
+    const xRotation = beta * 0.45;
+    const yRotation = gamma * 0.45;
 
     cube.style.transform = `rotateX(${xRotation}deg) rotateY(${yRotation}deg)`;
 }
@@ -33,6 +33,7 @@ function handleMouseMove(event) {
     cube.style.transform = `rotateX(${xRotation}deg) rotateY(${yRotation}deg)`;
 }
 
+// Add event listeners
 if (window.DeviceOrientationEvent) {
     window.addEventListener('deviceorientation', handleOrientation);
 } else {
