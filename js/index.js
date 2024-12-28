@@ -1,54 +1,40 @@
-const cube = document.getElementById('cube');
-let rotateX = 0;
-let rotateY = 0;
+const cube = document.querySelector('.cube');
 
-// Check for accelerometer availability
-if (window.DeviceMotionEvent) {
-    window.addEventListener("devicemotion", (event) => {
-        if (event.accelerationIncludingGravity) {
-            const { x, y } = event.accelerationIncludingGravity;
+// Function to handle device orientation
+function handleOrientation(event) {
+    const beta = event.beta; // X-axis rotation [-180,180]
+    const gamma = event.gamma; // Y-axis rotation [-90,90]
 
-            rotateX += y * 2; // Adjust rotation sensitivity
-            rotateY += x * 2;
+    // Reduce sensitivity to 45%
+    const xRotation = (beta || 0) * 0.45;
+    const yRotation = (gamma || 0) * 0.45;
 
-            cube.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-        }
-    });
+    cube.style.transform = `rotateX(${xRotation}deg) rotateY(${yRotation}deg)`;
+}
 
-    // Reset cube when shaken
-    window.addEventListener("devicemotion", (event) => {
-        const shakeThreshold = 15; // Sensitivity for shake detection
-        if (Math.abs(event.acceleration.x) > shakeThreshold ||
-            Math.abs(event.acceleration.y) > shakeThreshold ||
-            Math.abs(event.acceleration.z) > shakeThreshold) {
-            rotateX = 0;
-            rotateY = 0;
-            cube.style.transform = `rotateX(0deg) rotateY(0deg)`;
-        }
-    });
+// Reset cube orientation on shake
+let shakeTimeout;
+window.addEventListener('devicemotion', (event) => {
+    const acceleration = event.accelerationIncludingGravity;
+    const totalAcceleration = Math.abs(acceleration.x) + Math.abs(acceleration.y) + Math.abs(acceleration.z);
+
+    if (totalAcceleration > 30) { // Adjust threshold for shake sensitivity
+        clearTimeout(shakeTimeout);
+        cube.style.transform = 'rotateX(0deg) rotateY(0deg)';
+        shakeTimeout = setTimeout(() => {}, 1000);
+    }
+});
+
+// Fallback for mouse movement on desktop
+function handleMouseMove(event) {
+    const xRotation = (event.clientY / window.innerHeight - 0.5) * 45; // Rotate up to 22.5 degrees
+    const yRotation = (event.clientX / window.innerWidth - 0.5) * 45; // Rotate up to 22.5 degrees
+
+    cube.style.transform = `rotateX(${xRotation}deg) rotateY(${yRotation}deg)`;
+}
+
+if (window.DeviceOrientationEvent) {
+    window.addEventListener('deviceorientation', handleOrientation);
 } else {
-    // Fallback for PCs: mouse hover to rotate
-    let isHovering = false;
-
-    cube.addEventListener("mousemove", (event) => {
-        if (!isHovering) {
-            const rect = cube.getBoundingClientRect();
-            const x = event.clientX - rect.left - rect.width / 2;
-            const y = event.clientY - rect.top - rect.height / 2;
-
-            rotateY = (x / rect.width) * 180; // Adjust rotation
-            rotateX = -(y / rect.height) * 180;
-
-            cube.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-        }
-    });
-
-    cube.addEventListener("mouseenter", () => {
-        isHovering = true;
-    });
-
-    cube.addEventListener("mouseleave", () => {
-        isHovering = false;
-        cube.style.transform = `rotateX(0deg) rotateY(0deg)`;
-    });
+    window.addEventListener('mousemove', handleMouseMove);
 }

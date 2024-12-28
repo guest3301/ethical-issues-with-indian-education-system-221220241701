@@ -74,55 +74,32 @@ footer a {
     text-decoration: none;
 }
 /****************************************************/
-
-.cube-wrapper {
+.cube-container {
     perspective: 1000px;
+    width: 300px;
+    height: 300px;
+    margin: auto;
+    position: relative;
 }
 
 .cube {
+    width: 100%;
+    height: 100%;
     position: relative;
-    width: 200px;
-    height: 200px;
     transform-style: preserve-3d;
-    transform: rotateX(0deg) rotateY(0deg);
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s ease;
 }
 
-.cube-face {
+.face {
     position: absolute;
-    width: 200px;
-    height: 200px;
-    background: #ccc;
-    border: 1px solid #000;
+    width: 100%;
+    height: 100%;
     backface-visibility: hidden;
 }
 
-.cube-face img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.front {
-    transform: translateZ(100px);
-}
-
-.back {
-    transform: rotateY(180deg) translateZ(100px);
-}
-
-.left {
-    transform: rotateY(-90deg) translateZ(100px);
-}
-
-.right {
-    transform: rotateY(90deg) translateZ(100px);
-}
-
-.top {
-    transform: rotateX(90deg) translateZ(100px);
-}
-
-.bottom {
-    transform: rotateX(-90deg) translateZ(100px);
-}
+.front { transform: translateZ(150px); }
+.back { transform: rotateY(180deg) translateZ(150px); }
+.left { transform: rotateY(-90deg) translateZ(150px); }
+.right { transform: rotateY(90deg) translateZ(150px); }
+.top { transform: rotateX(90deg) translateZ(150px); }
+.bottom { transform: rotateX(-90deg) translateZ(150px); }
